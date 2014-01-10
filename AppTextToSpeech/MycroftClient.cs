@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace AppTextToSpeech
 {
@@ -45,16 +46,50 @@ namespace AppTextToSpeech
       System.Diagnostics.Debug.WriteLine("Listening for commands");
       while (true)
       {
-        StreamReader reader = new StreamReader(client);
-        String msgLen = reader.ReadLine();
+        // Get the message length
+        byte[] smallBuf = new byte[100];
+        int i = 0;
+        while (i < smallBuf.Length) // read until we find a newline
+        {
+          smallBuf[i] = (byte)client.ReadByte();
+          i++;
+          try
+          {
+            string soFar = Encoding.UTF8.GetString(smallBuf, 0, i);
+            if (soFar.EndsWith("\n"))
+            {
+              break;
+            }
+          }
+          catch (ArgumentException ex) { } // do nothing, it's just not valid yet
+        }
+        // make the last a null character
+        smallBuf[Math.Min(smallBuf.Length - 1, i)] = (byte)'\0';
+        String msgLen = Encoding.UTF8.GetString(smallBuf, 0, Math.Min(smallBuf.Length-1, i+1));
         msgLen = msgLen.Trim();
-        System.Diagnostics.Debug.WriteLine("Message length " + msgLen);
-        int bufLen = int.Parse(msgLen)-20;
+
+        // yay we have the message length! let's get the message
+        int bufLen = int.Parse(msgLen);
         byte[] buff = new byte[bufLen];
         client.Read(buff, 0, bufLen);
         string sent = Encoding.UTF8.GetString(buff, 0, bufLen);
-        System.Diagnostics.Debug.WriteLine(sent);
+
+        // yay we have the message! split it up
+        int index = sent.IndexOf(" {");
+        string verb = sent.Substring(0, index);
+        string json = sent.Substring(index + 1);
+        JObject parsedJson = JObject.Parse(json);
       }
+    }
+
+    /// <summary>
+    /// Handle a message sent from Mycroft
+    /// </summary>
+    /// <param name="type">the type of the message</param>
+    /// <param name="json">the parsed json</param>
+    private void handleMessage(string type, JObject json)
+    {
+      System.Diagnostics.Debug.WriteLine("got type " + type);
     }
 
     /// <summary>
