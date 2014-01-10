@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Speech.Synthesis;
 
-namespace SimpleSpeak
+namespace AppTextToSpeech
 {
   class Program
   {
     static void Main(string[] args)
     {
-      SpeechSynthesizer s = new SpeechSynthesizer();
-      s.Speak("Hello. My name is Microsoft Anna.");
-
+      var client = new MycroftClient("localhost", 1847);
+      client.ListenForCommands();
     }
   }
 }

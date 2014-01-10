@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 namespace AppTextToSpeech
 {
@@ -36,6 +37,47 @@ namespace AppTextToSpeech
     private void InitializeConnection(String host, int port)
     {
       client = new TcpClient(host, port).GetStream();
+      SendManifest();
+    }
+
+    public void ListenForCommands()
+    {
+      System.Diagnostics.Debug.WriteLine("Listening for commands");
+      while (true)
+      {
+        StreamReader reader = new StreamReader(client);
+        String msgLen = reader.ReadLine();
+        msgLen = msgLen.Trim();
+        System.Diagnostics.Debug.WriteLine("Message length " + msgLen);
+        int bufLen = int.Parse(msgLen)-20;
+        byte[] buff = new byte[bufLen];
+        client.Read(buff, 0, bufLen);
+        string sent = Encoding.UTF8.GetString(buff, 0, bufLen);
+        System.Diagnostics.Debug.WriteLine(sent);
+      }
+    }
+
+    /// <summary>
+    /// Send the Application's manifest file
+    /// </summary>
+    private void SendManifest()
+    {
+      String manifest = "";
+      manifest = "";
+      manifest += "{";
+      manifest += "\"version\": \"0.0.1\",";
+      manifest += "\"name\": \"text-to-speech\",";
+      manifest += "\"displayname\": \"Mycroft Text to Speech\",";
+      manifest += "\"instanceID\": \"text2speech\",";
+      manifest += "\"capabilities\": {";
+      manifest += "\"tts\": \"0.1\"";
+      manifest += "},";
+      manifest += "\"API\": \"0\",";
+      manifest += "\"description\": \"Using .NET to provide mycroft a most excellent voice\",";
+      manifest += "\"dependencies\": {";
+      manifest += "  \"logger\": \"1.0\"";
+      manifest += "}}";
+      TellMycroft("APP_MANIFEST " + manifest);
     }
 
     /// <summary>
@@ -44,9 +86,9 @@ namespace AppTextToSpeech
     /// <param name="message">the full message to send</param>
     public void TellMycroft(String message)
     {
+      int numBytes = Encoding.UTF8.GetBytes(message).Length;
+      message = numBytes + "\n" + message;
       byte[] bytes = Encoding.UTF8.GetBytes(message);
-      byte[] header = Encoding.UTF8.GetBytes(bytes.Length + "\n");
-      client.Write(header, 0, header.Length);
       client.Write(bytes, 0, bytes.Length);
     }
   }
