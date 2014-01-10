@@ -16,7 +16,7 @@ namespace AppTextToSpeech
     /// <summary>
     /// The connection to Mycroft server
     /// </summary>
-    private SslStream stream;
+    private NetworkStream client;
 
     /// <summary>
     /// Construct a new client which has a TLS stream with the Mycroft server.
@@ -35,13 +35,7 @@ namespace AppTextToSpeech
     /// <param name="port">Mycroft's port</param>
     private void InitializeConnection(String host, int port)
     {
-      var tcpConn = new TcpClient(host, port);
-      stream = new SslStream(
-        tcpConn.GetStream(),
-        false,
-        new RemoteCertificateValidationCallback(ValidateServerCertificate),
-        new LocalCertificateSelectionCallback(SelectLocalCertificate)
-        );
+      client = new TcpClient(host, port).GetStream();
     }
 
     /// <summary>
@@ -50,25 +44,10 @@ namespace AppTextToSpeech
     /// <param name="message">the full message to send</param>
     public void TellMycroft(String message)
     {
+      byte[] bytes = Encoding.UTF8.GetBytes(message);
+      byte[] header = Encoding.UTF8.GetBytes(bytes.Length + "\n");
+      client.Write(header, 0, header.Length);
+      client.Write(bytes, 0, bytes.Length);
     }
-
-    public static bool ValidateServerCertificate(
-          object sender,
-          X509Certificate certificate,
-          X509Chain chain,
-          SslPolicyErrors sslPolicyErrors)
-    {
-      return true; // we don't care if the server is valid
-    }
-
-    public static X509Certificate SelectLocalCertificate(
-      object sender,
-      string targetHost, 
-      X509CertificateCollection localCertificates, 
-      X509Certificate remoteCertificate, 
-      string[] acceptableIssuers) {
-      return null;
-    }
-
   }
 }
