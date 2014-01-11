@@ -87,7 +87,7 @@ namespace AppTextToSpeech
     /// </summary>
     /// <param name="type">the type of the message</param>
     /// <param name="json">the parsed json</param>
-    private void handleMessage(string type, JObject json)
+    private void HandleMessage(string type, JObject json)
     {
       System.Diagnostics.Debug.WriteLine("got type " + type);
     }
