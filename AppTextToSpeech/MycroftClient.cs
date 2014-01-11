@@ -39,6 +39,7 @@ namespace AppTextToSpeech
     {
       client = new TcpClient(host, port).GetStream();
       SendManifest();
+      TellMycroft("APP_UP");
     }
 
     public void ListenForCommands()
@@ -79,6 +80,7 @@ namespace AppTextToSpeech
         string verb = sent.Substring(0, index);
         string json = sent.Substring(index + 1);
         JObject parsedJson = JObject.Parse(json);
+        HandleMessage(verb, parsedJson);
       }
     }
 
@@ -103,7 +105,7 @@ namespace AppTextToSpeech
       manifest += "\"version\": \"0.0.1\",";
       manifest += "\"name\": \"text-to-speech\",";
       manifest += "\"displayname\": \"Mycroft Text to Speech\",";
-      manifest += "\"instanceID\": \"text2speech\",";
+      manifest += "\"instanceId\": \"text2speech\",";
       manifest += "\"capabilities\": {";
       manifest += "\"tts\": \"0.1\"";
       manifest += "},";
