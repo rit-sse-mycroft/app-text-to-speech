@@ -66,40 +66,49 @@ namespace AppTextToSpeech
       while (true)
       {
         // Get the message length
-        byte[] smallBuf = new byte[100];
-        int i = 0;
-        while (i < smallBuf.Length) // read until we find a newline
-        {
-          smallBuf[i] = (byte)input.ReadByte();
-          i++;
-          try
-          {
-            string soFar = Encoding.UTF8.GetString(smallBuf, 0, i);
-            if (soFar.EndsWith("\n"))
-            {
-              break;
-            }
-          }
-          catch (ArgumentException ex) { } // do nothing, it's just not valid yet
-        }
-        // make the last a null character
-        smallBuf[Math.Min(smallBuf.Length - 1, i)] = (byte)'\0';
-        String msgLen = Encoding.UTF8.GetString(smallBuf, 0, Math.Min(smallBuf.Length-1, i+1));
-        msgLen = msgLen.Trim();
-
-        // yay we have the message length! let's get the message
-        int bufLen = int.Parse(msgLen);
-        byte[] buff = new byte[bufLen];
-        input.Read(buff, 0, bufLen);
-        string sent = Encoding.UTF8.GetString(buff, 0, bufLen);
-
-        // yay we have the message! split it up
-        int index = sent.IndexOf(" {");
-        string verb = sent.Substring(0, index);
-        string json = sent.Substring(index + 1);
-        JObject parsedJson = JObject.Parse(json);
-        HandleMessage(verb, parsedJson);
+        ReadCommand();
       }
+    }
+
+    /// <summary>
+    ///  Read and handle one single command
+    /// </summary>
+    public void ReadCommand()
+    {
+      byte[] smallBuf = new byte[100];
+      int i = 0;
+      while (i < smallBuf.Length) // read until we find a newline
+      {
+        smallBuf[i] = (byte)input.ReadByte();
+        i++;
+        try
+        {
+          string soFar = Encoding.UTF8.GetString(smallBuf, 0, i);
+          if (soFar.EndsWith("\n"))
+          {
+            break;
+          }
+        }
+        catch (ArgumentException ex) { } // do nothing, it's just not valid yet
+      }
+      // make the last a null character
+      smallBuf[Math.Min(smallBuf.Length - 1, i)] = (byte)'\0';
+      String msgLen = Encoding.UTF8.GetString(smallBuf, 0, Math.Min(smallBuf.Length - 1, i + 1));
+      msgLen = msgLen.Trim();
+
+      // yay we have the message length! let's get the message
+      int bufLen = int.Parse(msgLen);
+      byte[] buff = new byte[bufLen];
+      input.Read(buff, 0, bufLen);
+      string sent = Encoding.UTF8.GetString(buff, 0, bufLen);
+      System.Diagnostics.Debug.WriteLine("Got message: " + sent);
+
+      // yay we have the message! split it up
+      int index = sent.IndexOf(" {");
+      string verb = sent.Substring(0, index);
+      string json = sent.Substring(index + 1);
+      JObject parsedJson = JObject.Parse(json);
+      HandleMessage(verb, parsedJson);
     }
 
     /// <summary>

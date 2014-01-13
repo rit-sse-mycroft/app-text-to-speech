@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AppTextToSpeech;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace AppTextToSpeech.Tests
 {
@@ -42,5 +43,37 @@ namespace AppTextToSpeech.Tests
       JObject.Parse(body);
     }
 
+    /// <summary>
+    /// Tests that a manifest_ok message is handled correctly
+    /// input - manifest_ok
+    /// output - app_up
+    /// </summary>
+    [TestMethod]
+    public void TestManifestOk()
+    {
+      var assembly = Assembly.GetExecutingAssembly();
+      var manifestStream = assembly.GetManifestResourceStream("AppTextToSpeech.Tests.inputs.manifest_ok.message");
+      StreamReader reader = new StreamReader(manifestStream);
+      string manifest_ok = reader.ReadToEnd();
+
+      Stream input = new MemoryStream(Encoding.UTF8.GetBytes(manifest_ok));
+      Stream output = new MemoryStream();
+
+      var client = new MycroftClient(input, output);
+
+      // reset the output
+      output.Seek(0, 0);
+      byte[] zeros = new byte[2048]; // that should be enough to zero it out right?
+
+      output.Seek(0, 0);
+      client.ReadCommand();
+      output.Seek(0, 0);
+
+      // make sure it sent APP_UP
+      byte[] app_up = new byte[8];
+      output.Read(app_up, 0, app_up.Length);
+      string parsedVerb = Encoding.UTF8.GetString(app_up);
+      Assert.AreEqual("6\nAPP_UP", parsedVerb, false);
+    }
   }
 }
