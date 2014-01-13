@@ -90,9 +90,22 @@ namespace AppTextToSpeech
     /// </summary>
     /// <param name="type">the type of the message</param>
     /// <param name="json">the parsed json</param>
-    private void HandleMessage(string type, JObject json)
+    private void HandleMessage(string type, dynamic json)
     {
       System.Diagnostics.Debug.WriteLine("got type " + type);
+      if (type == "MSG_QUERY")
+      {
+        string id = json.id;
+        string capability = json.capability;
+        string remoteprocedure = json.remoteprocedure;
+        string[] args = json.args;
+        string[] instanceId = json.instanceId;
+      }
+      if (type == "APP_MANIFEST_OK")
+      {
+        string instanceId = json.instanceId;
+        System.Diagnostics.Debug.WriteLine("instanceId: " + instanceId);
+      }
     }
 
     /// <summary>
