@@ -20,6 +20,7 @@ namespace AppTextToSpeech
     /// The connection to Mycroft server
     /// </summary>
     private NetworkStream client;
+    private MycroftVoice voice;
 
     /// <summary>
     /// Construct a new client which has a TLS stream with the Mycroft server.
@@ -29,6 +30,7 @@ namespace AppTextToSpeech
     public MycroftClient(String host, int port)
     {
       InitializeConnection(host, port);
+      voice = new MycroftVoice();
     }
 
     /// <summary>
@@ -102,6 +104,8 @@ namespace AppTextToSpeech
         JArray instanceId = json.instanceId;
 
         System.Diagnostics.Debug.WriteLine("we want to say: " + args.First);
+        String message = (args.First).ToString();
+        voice.SayMessage(message);
       }
       if (type == "APP_MANIFEST_OK")
       {
