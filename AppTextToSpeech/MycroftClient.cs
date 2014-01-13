@@ -30,6 +30,12 @@ namespace AppTextToSpeech
     public MycroftClient(String host, int port)
     {
       InitializeConnection(host, port);
+      SendManifest();
+      TellMycroft("APP_UP");
+    }
+
+    private MycroftClient()
+    {
       voice = new MycroftVoice();
     }
 
@@ -41,8 +47,6 @@ namespace AppTextToSpeech
     private void InitializeConnection(String host, int port)
     {
       client = new TcpClient(host, port).GetStream();
-      SendManifest();
-      TellMycroft("APP_UP");
     }
 
     public void ListenForCommands()

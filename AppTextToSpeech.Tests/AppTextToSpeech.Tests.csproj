@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>279ef586-8953-4b53-8933-e7046e099928</ProjectGuid>
+    <ProjectGuid>{55F5E064-1928-4601-B8D1-B0FDF461E618}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AppTextToSpeech.Tests</RootNamespace>
