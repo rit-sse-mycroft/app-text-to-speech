@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using System.Reflection;
 using Newtonsoft.Json.Linq;
 
 namespace AppTextToSpeech
@@ -97,24 +98,15 @@ namespace AppTextToSpeech
     /// <summary>
     /// Send the Application's manifest file
     /// </summary>
-    private void SendManifest()
+    public void SendManifest()
     {
-      String manifest = "";
-      manifest = "";
-      manifest += "{";
-      manifest += "\"version\": \"0.0.1\",";
-      manifest += "\"name\": \"text-to-speech\",";
-      manifest += "\"displayname\": \"Mycroft Text to Speech\",";
-      manifest += "\"instanceId\": \"text2speech\",";
-      manifest += "\"capabilities\": {";
-      manifest += "\"tts\": \"0.1\"";
-      manifest += "},";
-      manifest += "\"API\": \"0\",";
-      manifest += "\"description\": \"Using .NET to provide mycroft a most excellent voice\",";
-      manifest += "\"dependencies\": {";
-      manifest += "  \"logger\": \"1.0\"";
-      manifest += "}}";
-      TellMycroft("APP_MANIFEST " + manifest);
+      //load path and manifest
+      var assembly = Assembly.GetExecutingAssembly();
+      var manifestStream = assembly.GetManifestResourceStream("AppTextToSpeech.app.json");
+      StreamReader reader = new StreamReader(manifestStream);
+      string manifest = reader.ReadToEnd();
+
+      TellMycroft("APP_MANIFEST \n" + manifest);
     }
 
     /// <summary>
