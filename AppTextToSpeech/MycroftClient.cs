@@ -98,10 +98,10 @@ namespace AppTextToSpeech
         string id = json.id;
         string capability = json.capability;
         string remoteprocedure = json.remoteprocedure;
-        string[] args = json.args;
-        string[] instanceId = json.instanceId;
+        JArray args = json.args;
+        JArray instanceId = json.instanceId;
 
-        System.Diagnostics.Debug.WriteLine("we want to say: " + args[0]);
+        System.Diagnostics.Debug.WriteLine("we want to say: " + args.First);
       }
       if (type == "APP_MANIFEST_OK")
       {
