@@ -27,7 +27,6 @@ namespace AppTextToSpeech
     /// <param name="output">where to write output</param>
     public MycroftClient(Stream input, Stream output)
     {
-      System.Diagnostics.Debug.WriteLine("Foooooo");
       this.input = input;
       this.output = output;
       Init();
