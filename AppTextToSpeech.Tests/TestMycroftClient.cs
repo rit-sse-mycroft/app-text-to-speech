@@ -2,14 +2,15 @@
 using System.Text;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AppTextToSpeech;
 
-namespace AppTextToSpeech
+namespace AppTextToSpeech.Tests
 {
   [TestClass]
-  public class UnitTest1
+  public class TestMycroftClient
   {
     [TestMethod]
-    public void TestMethod1()
+    public void TestCreation()
     {
 
     }
