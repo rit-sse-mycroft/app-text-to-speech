@@ -121,7 +121,7 @@ namespace AppTextToSpeech
       StreamReader reader = new StreamReader(manifestStream);
       string manifest = reader.ReadToEnd();
 
-      TellMycroft("APP_MANIFEST \n" + manifest);
+      TellMycroft("APP_MANIFEST " + manifest);
     }
 
     /// <summary>
