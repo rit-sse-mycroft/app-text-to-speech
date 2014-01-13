@@ -47,7 +47,6 @@ namespace AppTextToSpeech
     {
       voice = new MycroftVoice();
       SendManifest();
-      TellMycroft("APP_UP");
     }
 
     /// <summary>
@@ -127,6 +126,7 @@ namespace AppTextToSpeech
       {
         string instanceId = json.instanceId;
         System.Diagnostics.Debug.WriteLine("instanceId: " + instanceId);
+        TellMycroft("APP_UP");
       }
     }
 
