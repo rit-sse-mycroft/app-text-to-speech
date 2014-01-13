@@ -15,12 +15,23 @@ namespace AppTextToSpeech
 
   class MycroftClient
   {
+    
+    private Stream input;
+    private Stream output;
+    private MycroftVoice voice;
 
     /// <summary>
-    /// The connection to Mycroft server
+    /// Construct a new client with the given input and output streams
     /// </summary>
-    private NetworkStream client;
-    private MycroftVoice voice;
+    /// <param name="input">what to read for input</param>
+    /// <param name="output">where to write output</param>
+    public MycroftClient(Stream input, Stream output)
+    {
+      System.Diagnostics.Debug.WriteLine("Foooooo");
+      this.input = input;
+      this.output = output;
+      Init();
+    }
 
     /// <summary>
     /// Construct a new client which has a TLS stream with the Mycroft server.
@@ -30,13 +41,14 @@ namespace AppTextToSpeech
     public MycroftClient(String host, int port)
     {
       InitializeConnection(host, port);
-      SendManifest();
-      TellMycroft("APP_UP");
+      Init();
     }
 
-    private MycroftClient()
+    private void Init()
     {
       voice = new MycroftVoice();
+      SendManifest();
+      TellMycroft("APP_UP");
     }
 
     /// <summary>
@@ -46,7 +58,8 @@ namespace AppTextToSpeech
     /// <param name="port">Mycroft's port</param>
     private void InitializeConnection(String host, int port)
     {
-      client = new TcpClient(host, port).GetStream();
+      input = new TcpClient(host, port).GetStream();
+      output = input;
     }
 
     public void ListenForCommands()
@@ -59,7 +72,7 @@ namespace AppTextToSpeech
         int i = 0;
         while (i < smallBuf.Length) // read until we find a newline
         {
-          smallBuf[i] = (byte)client.ReadByte();
+          smallBuf[i] = (byte)input.ReadByte();
           i++;
           try
           {
@@ -79,7 +92,7 @@ namespace AppTextToSpeech
         // yay we have the message length! let's get the message
         int bufLen = int.Parse(msgLen);
         byte[] buff = new byte[bufLen];
-        client.Read(buff, 0, bufLen);
+        input.Read(buff, 0, bufLen);
         string sent = Encoding.UTF8.GetString(buff, 0, bufLen);
 
         // yay we have the message! split it up
@@ -141,7 +154,7 @@ namespace AppTextToSpeech
       int numBytes = Encoding.UTF8.GetBytes(message).Length;
       message = numBytes + "\n" + message;
       byte[] bytes = Encoding.UTF8.GetBytes(message);
-      client.Write(bytes, 0, bytes.Length);
+      output.Write(bytes, 0, bytes.Length);
     }
   }
 }
