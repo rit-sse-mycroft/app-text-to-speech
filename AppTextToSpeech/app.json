@@ -2,7 +2,7 @@
     "version": "0.0.1",
     "name": "text-to-speech",
     "displayname": "Mycroft Text to Speech",
-    "instanceID": "text2speech",
+    "instanceId": "text2speech",
     "capabilities": {
       "tts": "0.1"
     },
