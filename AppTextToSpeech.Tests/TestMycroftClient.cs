@@ -63,14 +63,14 @@ namespace AppTextToSpeech.Tests
 
       // reset the output
       output.Seek(0, 0);
-      byte[] zeros = new byte[2048]; // that should be enough to zero it out right?
+      output.SetLength(0);
 
       output.Seek(0, 0);
       client.ReadCommand();
       output.Seek(0, 0);
 
       // make sure it sent APP_UP
-      byte[] app_up = new byte[8];
+      byte[] app_up = new byte[20];
       output.Read(app_up, 0, app_up.Length);
       string parsedVerb = Encoding.UTF8.GetString(app_up);
       Assert.AreEqual("6\nAPP_UP", parsedVerb, false);
