@@ -12,13 +12,14 @@ namespace AppTextToSpeech
   {
     public string TargetSpeakers;
     public string Text;
-    public string UUID;
+    public string OriginalUUID;
+    public string NewUUID;
     public string Procedure;
     public Stream Output;
 
     public virtual int GetHashCode()
     {
-      return UUID.GetHashCode();
+      return OriginalUUID.GetHashCode();
     }
   }
 }

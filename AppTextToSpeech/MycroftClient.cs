@@ -129,7 +129,7 @@ namespace AppTextToSpeech
       if (type == "MSG_QUERY")
       {
         MsgQuery qry = new MsgQuery();
-        qry.UUID = json.id;
+        qry.OriginalUUID = json.id;
         qry.Procedure = json.remoteProcedure;
         JArray args = json.args;
         IList<JToken> argTokens = json.args;
@@ -150,6 +150,7 @@ namespace AppTextToSpeech
         {
           MemoryStream stream = new MemoryStream();
           qry.Output = stream;
+          qry.NewUUID = System.Guid.NewGuid().ToString();
         }
       }
       if (type == "APP_MANIFEST_OK")
