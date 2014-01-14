@@ -15,5 +15,10 @@ namespace AppTextToSpeech
     public string UUID;
     public string Procedure;
     public Stream Output;
+
+    public virtual int GetHashCode()
+    {
+      return UUID.GetHashCode();
+    }
   }
 }
