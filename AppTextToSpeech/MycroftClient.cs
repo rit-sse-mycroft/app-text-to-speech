@@ -165,6 +165,9 @@ namespace AppTextToSpeech
         msgForSpeakers.Add("instanceId", instanceId);
         msgForSpeakers.Add("priority", msg.Priority);
         msgForSpeakers.Add("remoteProcedure", "doStream");
+
+        voice.SaveMessage(msg.Text, msg.Output);
+        processed[msg.NewUUID] = msg;
         TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
       }
     }
