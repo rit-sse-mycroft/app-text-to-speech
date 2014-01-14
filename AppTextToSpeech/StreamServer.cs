@@ -53,7 +53,6 @@ namespace AppTextToSpeech
         System.Diagnostics.Debug.WriteLine("Sending data for guid " + guid);
         query.Output.Seek(0, 0);
         Task foo = query.Output.CopyToAsync(stream);
-        foo.Start();
       }
     }
   }
