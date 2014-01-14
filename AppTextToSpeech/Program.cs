@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 
@@ -11,7 +11,8 @@ namespace AppTextToSpeech
   { 
     static void Main(string[] args)
     {
-      var client = new MycroftClient("localhost", 1847);
+      var messages = new ConcurrentDictionary<string, MsgQuery>();
+      var client = new MycroftClient("localhost", 1847, messages);
       client.ListenForCommands();
     }
   }

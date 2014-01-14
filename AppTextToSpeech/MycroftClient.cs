@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,17 +20,20 @@ namespace AppTextToSpeech
     private Stream input;
     private Stream output;
     private MycroftVoice voice;
+    private ConcurrentDictionary<string, MsgQuery> processed;
 
     /// <summary>
-    /// Construct a new client with the given input and output streams
+    /// Construct a new client with the given input and output streams.
+    /// Primarily used for testing.
     /// </summary>
     /// <param name="input">what to read for input</param>
     /// <param name="output">where to write output</param>
-    public MycroftClient(Stream input, Stream output)
+    /// <param name="pdct">Dictionary to use for processed queries</param>
+    public MycroftClient(Stream input, Stream output, ConcurrentDictionary<string, MsgQuery> pdct)
     {
       this.input = input;
       this.output = output;
-      Init();
+      Init(pdct);
     }
 
     /// <summary>
@@ -37,14 +41,17 @@ namespace AppTextToSpeech
     /// </summary>
     /// <param name="host">Mycroft's hostname</param>
     /// <param name="port"><Mycroft's port</param>
-    public MycroftClient(String host, int port)
+    /// <param name="pdct">Dictionary to use for processed queries</param>
+    public MycroftClient(String host, int port, ConcurrentDictionary<string, MsgQuery> pdct)
     {
       InitializeConnection(host, port);
-      Init();
+      Init(pdct);
     }
 
-    private void Init()
+    private void Init(ConcurrentDictionary<string, MsgQuery> pdct)
     {
+      processed = pdct;
+      processed.Clear();
       voice = new MycroftVoice();
       SendManifest();
     }
