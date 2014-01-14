@@ -18,6 +18,7 @@ namespace AppTextToSpeech
       var server = new StreamServer(messages, 32761);
 
       Thread serverThread = new Thread(new ThreadStart(server.StartServing));
+      serverThread.Start();
       client.ListenForCommands();
     }
   }
