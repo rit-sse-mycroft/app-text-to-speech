@@ -121,15 +121,29 @@ namespace AppTextToSpeech
       System.Diagnostics.Debug.WriteLine("got type " + type);
       if (type == "MSG_QUERY")
       {
-        string id = json.id;
-        string capability = json.capability;
-        string remoteprocedure = json.remoteprocedure;
+        MsgQuery qry = new MsgQuery();
+        qry.UUID = json.id;
+        qry.Procedure = json.remoteProcedure;
         JArray args = json.args;
-        JArray instanceId = json.instanceId;
-
-        System.Diagnostics.Debug.WriteLine("we want to say: " + args.First);
-        String message = (args.First).ToString();
-        voice.SayMessage(message);
+        IList<JToken> argTokens = json.args;
+        if (argTokens.Count == 2)
+        {
+          qry.TargetSpeakers = argTokens[1].ToString();
+        }
+        else
+        {
+          qry.TargetSpeakers = null;
+        }
+        qry.Text = argTokens[0].ToString();
+        string id = json.id;
+        System.Diagnostics.Debug.WriteLine("we want to say: " + qry.Text);
+        if (qry.Procedure == "say")
+          voice.SayMessage(qry.Text);
+        else if (qry.Procedure == "stream")
+        {
+          MemoryStream stream = new MemoryStream();
+          qry.Output = stream;
+        }
       }
       if (type == "APP_MANIFEST_OK")
       {
