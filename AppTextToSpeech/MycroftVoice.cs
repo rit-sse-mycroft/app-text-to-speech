@@ -25,5 +25,12 @@ namespace AppTextToSpeech
         {
             synth.Speak(message);
         }
+
+        //Example Filepath: @"C:\Users\Joe\Desktop\Test.wav"
+        public void SaveMessage(string filepath, string message)
+        {
+            synth.SetOutputToWaveFile(filepath);
+            synth.Speak(message);
+        }
     }
 }
