@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Speech.Synthesis;
+using System.IO;
 
 namespace AppTextToSpeech
 {
@@ -27,10 +28,9 @@ namespace AppTextToSpeech
       synth.Speak(message);
     }
 
-    //Example Filepath: @"C:\Users\Joe\Desktop\Test.wav"
-    public void SaveMessage(string filepath, string message)
+    public void SaveMessage(String message, Stream output)
     {
-      synth.SetOutputToWaveFile(filepath);
+      synth.SetOutputToWaveStream(output);
       synth.Speak(message);
     }
   }
