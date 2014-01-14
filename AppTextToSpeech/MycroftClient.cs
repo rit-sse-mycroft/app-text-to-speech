@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -20,6 +21,7 @@ namespace AppTextToSpeech
     private Stream input;
     private Stream output;
     private MycroftVoice voice;
+    private string defaultSpeakerInstanceId;
     private ConcurrentDictionary<string, MsgQuery> processed;
 
     /// <summary>
@@ -128,36 +130,42 @@ namespace AppTextToSpeech
       System.Diagnostics.Debug.WriteLine("got type " + type);
       if (type == "MSG_QUERY")
       {
-        MsgQuery qry = new MsgQuery();
-        qry.OriginalUUID = json.id;
-        qry.Procedure = json.remoteProcedure;
-        JArray args = json.args;
-        IList<JToken> argTokens = json.args;
-        if (argTokens.Count == 2)
-        {
-          qry.TargetSpeakers = argTokens[1].ToString();
-        }
-        else
-        {
-          qry.TargetSpeakers = null;
-        }
-        qry.Text = argTokens[0].ToString();
-        string id = json.id;
-        System.Diagnostics.Debug.WriteLine("we want to say: " + qry.Text);
-        if (qry.Procedure == "say")
-          voice.SayMessage(qry.Text);
-        else if (qry.Procedure == "stream")
-        {
-          MemoryStream stream = new MemoryStream();
-          qry.Output = stream;
-          qry.NewUUID = System.Guid.NewGuid().ToString();
-        }
+        HandleMsgQuery(json);
       }
       if (type == "APP_MANIFEST_OK")
       {
         string instanceId = json.instanceId;
         System.Diagnostics.Debug.WriteLine("instanceId: " + instanceId);
         TellMycroft("APP_UP");
+      }
+    }
+
+    private void HandleMsgQuery(dynamic json)
+    {
+      // construct a query object
+      var msg = new MsgQuery(json);
+      string id = msg.OriginalUUID;
+      System.Diagnostics.Debug.WriteLine("we want to say: " + msg.Text);
+      if (msg.Procedure == "say")
+        voice.SayMessage(msg.Text);
+      else if (msg.Procedure == "stream")
+      {
+        MemoryStream stream = new MemoryStream();
+        msg.Output = stream;
+        msg.NewUUID = System.Guid.NewGuid().ToString();
+
+        JObject msgForSpeakers = new JObject();
+        msgForSpeakers.Add("id", msg.NewUUID);
+        msgForSpeakers.Add("ip", GetSystemIP().ToString());
+        msgForSpeakers.Add("port", 32761);
+        msgForSpeakers.Add("streamType", "wav");
+        msgForSpeakers.Add("capability", "speakers");
+        JArray instanceId = new JArray();
+        instanceId.Add(msg.TargetSpeakers != null ? msg.TargetSpeakers : defaultSpeakerInstanceId);
+        msgForSpeakers.Add(instanceId);
+        msgForSpeakers.Add("priority", msg.Priority);
+        msgForSpeakers.Add("remoteProcedure", "doStream");
+        TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
       }
     }
 
@@ -185,6 +193,22 @@ namespace AppTextToSpeech
       message = numBytes + "\n" + message;
       byte[] bytes = Encoding.UTF8.GetBytes(message);
       output.Write(bytes, 0, bytes.Length);
+    }
+
+    private static IPAddress GetSystemIP()
+    {
+      // totally stolen from http://stackoverflow.com/questions/1069103/how-to-get-my-own-ip-address-in-c
+      IPAddress ret = null;
+      IPHostEntry host;
+      host = Dns.GetHostEntry(Dns.GetHostName());
+      foreach (IPAddress ip in host.AddressList)
+      {
+        if (ip.AddressFamily == AddressFamily.InterNetwork)
+        {
+          ret = ip;
+        }
+      }
+      return ret;
     }
   }
 }
