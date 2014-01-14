@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.IO;
+using System.Collections.Concurrent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AppTextToSpeech;
 using Newtonsoft.Json.Linq;
@@ -23,7 +24,7 @@ namespace AppTextToSpeech.Tests
       Stream input = new MemoryStream(inputBytes);
       Stream output = new MemoryStream();
 
-      var client = new MycroftClient(input, output);
+      var client = new MycroftClient(input, output, new ConcurrentDictionary<string,MsgQuery>());
 
       output.Seek(0, 0);
       StreamReader reader = new StreamReader(output);
@@ -59,7 +60,7 @@ namespace AppTextToSpeech.Tests
       Stream input = new MemoryStream(Encoding.UTF8.GetBytes(manifest_ok));
       Stream output = new MemoryStream();
 
-      var client = new MycroftClient(input, output);
+      var client = new MycroftClient(input, output, new ConcurrentDictionary<string,MsgQuery>());
 
       // reset the output
       output.Seek(0, 0);
