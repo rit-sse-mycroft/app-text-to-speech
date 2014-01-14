@@ -162,7 +162,7 @@ namespace AppTextToSpeech
         msgForSpeakers.Add("capability", "speakers");
         JArray instanceId = new JArray();
         instanceId.Add(msg.TargetSpeakers != null ? msg.TargetSpeakers : defaultSpeakerInstanceId);
-        msgForSpeakers.Add(instanceId);
+        msgForSpeakers.Add("instanceId", instanceId);
         msgForSpeakers.Add("priority", msg.Priority);
         msgForSpeakers.Add("remoteProcedure", "doStream");
         TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
