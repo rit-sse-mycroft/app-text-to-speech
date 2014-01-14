@@ -23,6 +23,7 @@ namespace AppTextToSpeech
 
     public void SayMessage(string message)
     {
+      synth.SetOutputToDefaultAudioDevice();
       synth.Speak(message);
     }
 
