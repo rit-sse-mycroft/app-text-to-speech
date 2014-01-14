@@ -21,7 +21,7 @@ namespace AppTextToSpeech
     private Stream input;
     private Stream output;
     private MycroftVoice voice;
-    private string defaultSpeakerInstanceId;
+    private string defaultSpeakerInstanceId = "speaker0";
     private ConcurrentDictionary<string, MsgQuery> processed;
 
     /// <summary>
