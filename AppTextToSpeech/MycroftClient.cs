@@ -146,25 +146,27 @@ namespace AppTextToSpeech
       var msg = new MsgQuery(json);
       string id = msg.OriginalUUID;
       System.Diagnostics.Debug.WriteLine("we want to say: " + msg.Text);
-      if (msg.Procedure == "say")
+      if (msg.Action == "say")
         voice.SayMessage(msg.Text);
-      else if (msg.Procedure == "stream")
+      else if (msg.Action == "stream")
       {
         MemoryStream stream = new MemoryStream();
         msg.Output = stream;
         msg.NewUUID = System.Guid.NewGuid().ToString();
 
         JObject msgForSpeakers = new JObject();
+        JObject data = new JObject();
         msgForSpeakers.Add("id", msg.NewUUID);
-        msgForSpeakers.Add("ip", GetSystemIP().ToString());
-        msgForSpeakers.Add("port", 32761);
-        msgForSpeakers.Add("streamType", "wav");
+        data.Add("ip", GetSystemIP().ToString());
+        data.Add("port", 32761);
+        data.Add("streamType", "wav");
+        msgForSpeakers.Add("data", data);
         msgForSpeakers.Add("capability", "speakers");
         JArray instanceId = new JArray();
         instanceId.Add(msg.TargetSpeakers != null ? msg.TargetSpeakers : defaultSpeakerInstanceId);
         msgForSpeakers.Add("instanceId", instanceId);
         msgForSpeakers.Add("priority", msg.Priority);
-        msgForSpeakers.Add("remoteProcedure", "doStream");
+        msgForSpeakers.Add("action", "doStream");
 
         voice.SaveMessage(msg.Text, msg.Output);
         processed[msg.NewUUID] = msg;

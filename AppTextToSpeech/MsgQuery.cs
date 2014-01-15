@@ -15,7 +15,7 @@ namespace AppTextToSpeech
     public string Text;
     public string OriginalUUID;
     public string NewUUID;
-    public string Procedure;
+    public string Action;
     public int Priority;
     public Stream Output;
 
@@ -26,18 +26,16 @@ namespace AppTextToSpeech
     public MsgQuery(dynamic json)
     {
       this.OriginalUUID = json.id;
-      this.Procedure = json.remoteProcedure;
-      JArray args = json.args;
-      IList<JToken> argTokens = json.args;
-      if (argTokens.Count == 2)
-      {
-        this.TargetSpeakers = argTokens[1].ToString();
-      }
+      this.Action = json.action;
+      JObject data = json.data;
+      JToken targetSpeakers = null;
+      if (data.TryGetValue("targetSpeaker", out targetSpeakers))
+        this.TargetSpeakers = targetSpeakers.ToString();
+      JToken text = null;
+      if (data.TryGetValue("text", out text))
+        this.Text = text.ToString();
       else
-      {
-        this.TargetSpeakers = null;
-      }
-      this.Text = argTokens[0].ToString();
+        this.Text = "";
       JObject jo = json;
       JToken priority = null;
       bool found = jo.TryGetValue("priority", out priority);
