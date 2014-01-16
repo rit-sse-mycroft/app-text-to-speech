@@ -23,6 +23,7 @@ namespace AppTextToSpeech
     private MycroftVoice voice;
     private string defaultSpeakerInstanceId = "speaker0";
     private ConcurrentDictionary<string, MsgQuery> processed;
+    private Dictionary<string, string> uniqueIdForwards;
 
     /// <summary>
     /// Construct a new client with the given input and output streams.
@@ -52,6 +53,7 @@ namespace AppTextToSpeech
 
     private void Init(ConcurrentDictionary<string, MsgQuery> pdct)
     {
+      this.uniqueIdForwards = new Dictionary<string, string>();
       processed = pdct;
       processed.Clear();
       voice = new MycroftVoice();
@@ -132,7 +134,20 @@ namespace AppTextToSpeech
       {
         HandleMsgQuery(json);
       }
-      if (type == "APP_MANIFEST_OK")
+      else if (type == "MSG_QUERY_SUCCESS")
+      {
+        // we need to forward the success message
+        JObject obj = new JObject();
+        string replyId = "";
+        if (this.uniqueIdForwards.TryGetValue(json.id, out replyId))
+        {
+          obj.Add("id", replyId);
+          obj.Add("ret", new JObject());
+          string msg = "MSG_QUERY_SUCCESS " + obj.ToString();
+          TellMycroft(msg);
+        }
+      }
+      else if (type == "APP_MANIFEST_OK")
       {
         string instanceId = json.instanceId;
         System.Diagnostics.Debug.WriteLine("instanceId: " + instanceId);
@@ -170,6 +185,7 @@ namespace AppTextToSpeech
 
         voice.SaveMessage(msg.Text, msg.Output);
         processed[msg.NewUUID] = msg;
+        this.uniqueIdForwards.Add(msg.NewUUID, msg.OriginalUUID);
         TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
       }
     }
