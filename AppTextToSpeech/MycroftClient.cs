@@ -139,7 +139,7 @@ namespace AppTextToSpeech
         // we need to forward the success message
         JObject obj = new JObject();
         string replyId = "";
-        if (this.uniqueIdForwards.TryGetValue(json.id, out replyId))
+        if (this.uniqueIdForwards.TryGetValue(json.id.ToString(), out replyId))
         {
           obj.Add("id", replyId);
           obj.Add("ret", new JObject());
