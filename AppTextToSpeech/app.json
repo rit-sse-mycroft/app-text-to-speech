@@ -4,11 +4,11 @@
     "displayName": "Mycroft Text to Speech",
     "instanceId": "text2speech",
     "capabilities": {
-      "tts": "0.1"
+      "tts": "0.0.1"
     },
     "API": "0",
     "description": "Using .NET to provide mycroft a most excellent voice",
     "dependencies": {
-        "logger": "1.0"
+        "logger": "1.0.0"
     }
 }
