@@ -23,6 +23,8 @@ namespace AppTextToSpeech
     private MycroftVoice voice;
     private string defaultSpeakerInstanceId = "speaker0";
     private ConcurrentDictionary<string, MsgQuery> processed;
+    private string speakerQueryId = System.Guid.NewGuid().ToString();
+    private string defaultPriority = "5";
 
     /// <summary>
     /// Construct a new client with the given input and output streams.
@@ -137,6 +139,7 @@ namespace AppTextToSpeech
         string instanceId = json.instanceId;
         System.Diagnostics.Debug.WriteLine("instanceId: " + instanceId);
         TellMycroft("APP_UP");
+        SendStreamRequest(instanceId);
       }
     }
 
@@ -186,6 +189,25 @@ namespace AppTextToSpeech
       string manifest = reader.ReadToEnd();
 
       TellMycroft("APP_MANIFEST " + manifest);
+    }
+
+    /// <summary>
+    /// Send the Application's stream request file
+    /// </summary>
+    public void SendStreamRequest(string activeInstanceId)
+    {
+      JObject streamRequest = new JObject();
+      streamRequest.Add("id", speakerQueryId);
+      JObject data = new JObject();
+      streamRequest.Add("data", data);
+      streamRequest.Add("capability", "speakers");
+      JArray instanceId = new JArray();
+      instanceId.Add(activeInstanceId);
+      streamRequest.Add("instanceId", instanceId);
+      streamRequest.Add("priority", defaultPriority);
+      streamRequest.Add("action", "doStream");
+
+      TellMycroft("MSG_QUERY " + streamRequest.ToString());
     }
 
     /// <summary>
