@@ -6,20 +6,19 @@ using System.Threading;
 
 namespace AppTextToSpeech
 {
-  enum AudioSource { AudioStream, DefaultAudioDevice, Null, WaveFile, WaveStream };
+    enum AudioSource { AudioStream, DefaultAudioDevice, Null, WaveFile, WaveStream };
     
-  class Program
-  { 
-    static void Main(string[] args)
-    {
-      var messages = new ConcurrentDictionary<string, MsgQuery>();
-
-      var client = new MycroftClient("localhost", 1847, messages);
-      var server = new StreamServer(messages, 32761);
-
-      Thread serverThread = new Thread(new ThreadStart(server.StartServing));
-      serverThread.Start();
-      client.ListenForCommands();
+    class Program
+    { 
+        static void Main(string[] args)
+        {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Expected arguments in the form speechrecognizer host port");
+                return;
+            }
+            var client = new TextToSpeechClient();
+            client.Connect(args[0], args[1]);
+        }
     }
-  }
 }
