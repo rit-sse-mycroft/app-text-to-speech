@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>dz.mediaplayer.vlc.windows</name>
+    </assembly>
+    <members>
+        <member name="T:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage">
+            <summary>
+            Win32 message struct.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.windowHandle">
+            <summary>
+            windowHandle.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.messageCode">
+            <summary>
+            messageCode.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.wParam">
+            <summary>
+            wParam.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.lParam">
+            <summary>
+            lParam.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.messageTime">
+            <summary>
+            messageTime.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.pointX">
+            <summary>
+            pointX.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.pointY">
+            <summary>
+            pointY.
+            </summary>
+        </member>
+        <member name="F:DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage.result">
+            <summary>
+            result.
+            </summary>
+        </member>
+        <member name="T:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump">
+            <summary>
+            Represents a custom windows messages pump.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.#ctor(System.IntPtr)">
+            <summary>
+            Constructor with window specified.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.Dispose">
+            <summary>
+            Clean up resources.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.Run">
+            <summary>
+            Runs the pump.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.Stop">
+            <summary>
+            Stops the pump.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.GetWindowText(System.IntPtr)">
+            <summary>
+            Returns window's text by the API function.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.GetWindowTextW(System.IntPtr,System.Text.StringBuilder,System.Int32)">
+            <summary>
+            Win32 thunk to original unicode function.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.FilterWindowMessage(DZ.MediaPlayer.Vlc.Windows.Interop.WindowMessage@)">
+            <summary>
+            FilterWindowMessage overridable method.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.Finalize">
+            <summary>
+            Finalizer.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.Dispose(System.Boolean)">
+            <summary>
+            Clean up.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.Interop.WindowsMessagePump.WindowHandle">
+            <summary>
+            Handle of window.
+            </summary>
+        </member>
+        <member name="T:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow">
+            <summary>
+            Win32 implementation of <see cref="T:DZ.MediaPlayer.Vlc.DoubleWindowBase"/>.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.GetMainWindowHandle">
+            <summary>
+            Handle of main window.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Dispose(System.Boolean)">
+            <summary>
+            Clean up resources.
+            </summary>
+            <param name="isDisposing"></param>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Finalize">
+            <summary>
+            Finalizer.
+            </summary>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.GetActiveWindowHandle">
+            <summary>
+            Gets handle of active subwindow.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.GetInactiveWindowHandle">
+            <summary>
+            Gets handle of inactive subwindow.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.SwitchWindows">
+            <summary>
+            Switches active and inactive subwindows.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Width">
+            <summary>
+            Window width.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Height">
+            <summary>
+            Window height.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Left">
+            <summary>
+            Window left position.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Top">
+            <summary>
+            Window top position.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.BackgroundColor">
+            <summary>
+            Background color.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.BackgroundImageFilePath">
+            <summary>
+            Background image file path.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.Visible">
+            <summary>
+            Is window visible.
+            </summary>
+        </member>
+        <member name="P:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindow.PlayerVisible">
+            <summary>
+            Is active subwindow visible.
+            </summary>
+        </member>
+        <member name="T:DZ.MediaPlayer.Vlc.Windows.WindowsOSDoubleWindowFactory">
+            <summary>
+            Instantiates WindowsOSDoubleWindow.
+            </summary>
+        </member>
+    </members>
+</doc>
