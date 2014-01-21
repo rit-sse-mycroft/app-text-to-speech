@@ -8,5 +8,8 @@ namespace AppTextToSpeech
 {
   class MycroftSpeaker
   {
+      private string instanceId;
+      private string status;
+      private int port;
   }
 }

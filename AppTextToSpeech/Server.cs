@@ -27,7 +27,7 @@ namespace Mycroft.App
         public Server()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var textStreamReader = new StreamReader(assembly.GetManifestResourceStream("SpeechRecognizer.app_manifest.json"));
+            var textStreamReader = new StreamReader("app.json");
             manifest = textStreamReader.ReadToEnd();
             var jsobj = ser.Deserialize<dynamic>(manifest);
             InstanceId = jsobj["instanceId"];
@@ -55,7 +55,6 @@ namespace Mycroft.App
         protected abstract void Response(APP_MANIFEST_OK type, dynamic message);
         protected abstract void Response(APP_DEPENDENCY type, dynamic message);
         protected abstract void Response(MSG_QUERY type, dynamic message);
-        protected abstract void Response(MSG_BROADCAST type, dynamic message);
 
 
         private void Response(string badtype, dynamic jsonobj)

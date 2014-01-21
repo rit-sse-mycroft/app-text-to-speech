@@ -63,6 +63,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="inputs\.gitkeep" />
     <EmbeddedResource Include="inputs\manifest_ok.message" />
     <None Include="packages.config" />

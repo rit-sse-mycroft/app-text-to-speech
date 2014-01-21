@@ -1,8 +1,4 @@
-﻿using DZ.MediaPlayer;
-using DZ.MediaPlayer.Vlc;
-using DZ.MediaPlayer.Vlc.Deployment;
-using DZ.MediaPlayer.Vlc.Common;
-using DZ.MediaPlayer.Vlc.Io;
+﻿using com.ptrampert.LibVLCBind;
 using Mycroft.App;
 using System;
 using System.Collections.Generic;
@@ -18,14 +14,14 @@ namespace AppTextToSpeech
 {
     public class TextToSpeechClient : Server
     {
-        private VlcMediaLibraryFactory factory;
+        private IVLCFactory factory;
+        private Dictionary<string, MycroftSpeaker> speakers;
         private string ipAddress;
         private int port;
 
         public TextToSpeechClient() : base()
         {
-            factory = new VlcMediaLibraryFactory(new string[] { });
-            factory.CreateSinglePlayers = true;
+            factory = new TwoflowerVLCFactory();
             WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
             using (WebResponse response = request.GetResponse())
             using (StreamReader stream = new StreamReader(response.GetResponseStream()))
@@ -47,5 +43,17 @@ namespace AppTextToSpeech
             await SendJson("APP_UP", new { });
             return;
         }
+
+        protected override void Response(APP_DEPENDENCY type, dynamic message)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Response(MSG_QUERY type, dynamic message)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
