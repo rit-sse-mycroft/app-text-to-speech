@@ -22,6 +22,7 @@ namespace AppTextToSpeech
     private Stream output;
     private MycroftVoice voice;
     private string defaultSpeakerInstanceId = "speaker0";
+    private List<MycroftSpeaker> speakers;
     private ConcurrentDictionary<string, MsgQuery> processed;
 
     /// <summary>
@@ -36,6 +37,7 @@ namespace AppTextToSpeech
       this.input = input;
       this.output = output;
       Init(pdct);
+      
     }
 
     /// <summary>
@@ -55,6 +57,7 @@ namespace AppTextToSpeech
       processed = pdct;
       processed.Clear();
       voice = new MycroftVoice();
+      speakers = new List<MycroftSpeaker>();
       SendManifest();
     }
 
@@ -132,12 +135,25 @@ namespace AppTextToSpeech
       {
         HandleMsgQuery(json);
       }
-      if (type == "APP_MANIFEST_OK")
+      else if (type == "APP_MANIFEST_OK")
       {
         string instanceId = json.instanceId;
         System.Diagnostics.Debug.WriteLine("instanceId: " + instanceId);
         TellMycroft("APP_UP");
       }
+      else if (type == "MSG_QUERY_SUCCESS")
+      {
+        if(json.instanceId == speakerQueryId)
+        {
+          MakeSpeaker(json);
+        }
+      }
+    }
+
+    private void MakeSpeaker(dynamic json)
+    {
+      // construct a speaker object
+      
     }
 
     private void HandleMsgQuery(dynamic json)

@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MycroftSpeaker.cs" />
     <Compile Include="MsgQuery.cs" />
     <Compile Include="MycroftVoice.cs" />
     <Compile Include="MycroftClient.cs" />
