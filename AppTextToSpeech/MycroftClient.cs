@@ -171,25 +171,25 @@ namespace AppTextToSpeech
       {
         MemoryStream stream = new MemoryStream();
         msg.Output = stream;
-        msg.NewUUID = System.Guid.NewGuid().ToString();
+        //msg.NewUUID = System.Guid.NewGuid().ToString();
 
-        JObject msgForSpeakers = new JObject();
-        JObject data = new JObject();
-        msgForSpeakers.Add("id", msg.NewUUID);
-        data.Add("ip", GetSystemIP().ToString());
-        data.Add("port", 32761);
-        data.Add("streamType", "wav");
-        msgForSpeakers.Add("data", data);
-        msgForSpeakers.Add("capability", "speakers");
-        JArray instanceId = new JArray();
-        instanceId.Add(msg.TargetSpeakers != null ? msg.TargetSpeakers : defaultSpeakerInstanceId);
-        msgForSpeakers.Add("instanceId", instanceId);
-        msgForSpeakers.Add("priority", msg.Priority);
-        msgForSpeakers.Add("action", "doStream");
+        //JObject msgForSpeakers = new JObject();
+        //JObject data = new JObject();
+        //msgForSpeakers.Add("id", msg.NewUUID);
+        //data.Add("ip", GetSystemIP().ToString());
+        //data.Add("port", 32761);
+        //data.Add("streamType", "wav");
+        //msgForSpeakers.Add("data", data);
+        //msgForSpeakers.Add("capability", "speakers");
+        //JArray instanceId = new JArray();
+        //instanceId.Add(msg.TargetSpeakers != null ? msg.TargetSpeakers : defaultSpeakerInstanceId);
+        //msgForSpeakers.Add("instanceId", instanceId);
+        //msgForSpeakers.Add("priority", msg.Priority);
+        //msgForSpeakers.Add("action", "doStream");
 
         voice.SaveMessage(msg.Text, msg.Output);
         processed[msg.NewUUID] = msg;
-        TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
+        //TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
       }
     }
 
