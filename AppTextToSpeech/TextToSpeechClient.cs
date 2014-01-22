@@ -43,7 +43,7 @@ namespace AppTextToSpeech
         {
             InstanceId = message["instanceId"];
             Console.WriteLine("Recieved: " + type);
-            await SendJson("APP_UP", new { });
+            await SendData("APP_UP", "");
             return;
         }
 
