@@ -30,6 +30,7 @@ namespace AppTextToSpeech
         public string Status
         {
             get { return status;  }
+            set { status = value; }
         }
       
     }
