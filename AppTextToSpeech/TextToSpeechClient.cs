@@ -1,5 +1,4 @@
-﻿using com.ptrampert.LibVLCBind;
-using Mycroft.App;
+﻿using Mycroft.App;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +9,19 @@ using System.Reflection;
 using System.Net;
 using Mycroft.App.Message;
 using System.Speech.Synthesis;
+using System.Net.Sockets;
 
 namespace AppTextToSpeech
 {
     public class TextToSpeechClient : Server
     {
-        private IVLCFactory factory;
         private MycroftVoice voice;
         private Dictionary<string, MycroftSpeaker> speakers;
         private string ipAddress;
         private int port;
-        private string arg;
 
         public TextToSpeechClient() : base()
         {
-            factory = new TwoflowerVLCFactory();
             speakers = new Dictionary<string, MycroftSpeaker>();
             voice = new MycroftVoice();
             WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
@@ -39,12 +36,6 @@ namespace AppTextToSpeech
             int last = ipAddress.LastIndexOf("</body>");
             ipAddress = ipAddress.Substring(first, last - first);
             port = 3000;
-            arg = ":sout=#transcode{vcodec=none,acodec=s16l,ab=128,channels=2,samplerate=8000}:rtp{sdp=rtsp://:1234/stream.sdp} :sout-keep";
-        }
-
-        private string[] GenerateArguments(int port)
-        {
-            return new string[] {":sout=#transcode{vcodec=none,acodec=s16l,ab=128,channels=2,samplerate=8000}:rtp{sdp=rtsp://" + ipAddress + ":" + port + "/stream.sdp}" ,":sout-keep"};
         }
 
         protected async override void Response(APP_MANIFEST_OK type, dynamic message)
@@ -65,7 +56,7 @@ namespace AppTextToSpeech
 
                 if (!speakers.ContainsKey(instance))
                 {
-                    MycroftSpeaker speaker = new MycroftSpeaker(instance, state, port, factory.InitializeVLC(GenerateArguments(port)));
+                    MycroftSpeaker speaker = new MycroftSpeaker(instance, state, port);
                     speakers[instance] = speaker;
                     port++;
                 }
@@ -83,6 +74,8 @@ namespace AppTextToSpeech
             }
             else
             {
+                TcpListener listener = new TcpListener(IPAddress.Parse(ipAddress), speaker.Port);
+                listener.Start();
                 await SendJson("MSG_QUERY", new
                 {
                     id = Guid.NewGuid(),
@@ -92,6 +85,7 @@ namespace AppTextToSpeech
                     priority = 30,
                     action = "doStream"
                 });
+                TcpClient client = await listener.AcceptTcpClientAsync();
                 var text = data["text"];
                 PromptBuilder prompt = new PromptBuilder(new System.Globalization.CultureInfo("en-US"));
                 foreach (var phrase in text)
@@ -101,7 +95,9 @@ namespace AppTextToSpeech
                 }
                 MemoryStream ms = new MemoryStream();
                 voice.SaveMessage(prompt, ms);
-                
+                await client.GetStream().WriteAsync(ms.GetBuffer(), 0, (int) ms.Length);
+                client.Close();
+                listener.Stop();
             }
         }
     }

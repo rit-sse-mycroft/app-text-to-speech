@@ -180,8 +180,8 @@ namespace AppTextToSpeech
       var msg = new MsgQuery(json);
       string id = msg.OriginalUUID;
       System.Diagnostics.Debug.WriteLine("we want to say: " + msg.Text);
-      if (msg.Action == "say")
-        voice.SayMessage(msg.Text);
+      if (msg.Action == "say") { }
+        //voice.SayMessage(msg.Text);
       else if (msg.Action == "stream")
       {
         MemoryStream stream = new MemoryStream();
@@ -202,7 +202,7 @@ namespace AppTextToSpeech
         //msgForSpeakers.Add("priority", msg.Priority);
         //msgForSpeakers.Add("action", "doStream");
 
-        voice.SaveMessage(msg.Text, msg.Output);
+        //voice.SaveMessage(msg.Text, msg.Output);
         processed[msg.NewUUID] = msg;
         this.uniqueIdForwards.Add(msg.NewUUID, msg.OriginalUUID);
         //TellMycroft("MSG_QUERY " + msgForSpeakers.ToString());
