@@ -80,10 +80,11 @@ namespace AppTextToSpeech
                 prompt.StartVoice(VoiceGender.Female, VoiceAge.Adult, 0);
                 foreach (var phrase in text)
                 {
-                    prompt.AppendText(phrase["delay"]);
+                    prompt.AppendText(phrase["phrase"]);
                     prompt.AppendBreak(new TimeSpan(phrase["delay"] * 10000000));
                 }
                 prompt.EndVoice();
+                prompt.AppendAudio("lutz.wav");
                 Thread t = new Thread(Listen);
                 t.Start(new { speaker = speaker, prompt = prompt });
 
