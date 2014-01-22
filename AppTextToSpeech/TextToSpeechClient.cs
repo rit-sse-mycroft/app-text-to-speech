@@ -10,6 +10,7 @@ using System.Net;
 using Mycroft.App.Message;
 using System.Speech.Synthesis;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace AppTextToSpeech
 {
@@ -74,9 +75,19 @@ namespace AppTextToSpeech
             }
             else
             {
-                TcpListener listener = new TcpListener(IPAddress.Parse(ipAddress), speaker.Port);
-                listener.Start();
-                await SendJson("MSG_QUERY", new
+                var text = data["text"];
+                PromptBuilder prompt = new PromptBuilder(new System.Globalization.CultureInfo("en-GB"));
+                prompt.StartVoice(VoiceGender.Female, VoiceAge.Adult, 0);
+                foreach (var phrase in text)
+                {
+                    prompt.AppendText(phrase["delay"]);
+                    prompt.AppendBreak(new TimeSpan(phrase["delay"] * 10000000));
+                }
+                prompt.EndVoice();
+                Thread t = new Thread(Listen);
+                t.Start(new { speaker = speaker, prompt = prompt });
+
+                SendJson("MSG_QUERY", new
                 {
                     id = Guid.NewGuid(),
                     capability = "audioOutput",
@@ -85,20 +96,20 @@ namespace AppTextToSpeech
                     priority = 30,
                     action = "doStream"
                 });
-                TcpClient client = await listener.AcceptTcpClientAsync();
-                var text = data["text"];
-                PromptBuilder prompt = new PromptBuilder(new System.Globalization.CultureInfo("en-US"));
-                foreach (var phrase in text)
-                {
-                    prompt.AppendText(phrase["phrase"]);
-                    prompt.AppendBreak(new TimeSpan(phrase["delay"] * 10000000));
-                }
-                MemoryStream ms = new MemoryStream();
-                voice.SaveMessage(prompt, ms);
-                await client.GetStream().WriteAsync(ms.GetBuffer(), 0, (int) ms.Length);
-                client.Close();
-                listener.Stop();
             }
+        }
+
+        protected void Listen(dynamic data)
+        {
+            var speaker = data.speaker;
+            TcpListener listener = new TcpListener(speaker.Port);
+            listener.Start();
+            TcpClient client = listener.AcceptTcpClient();
+            MemoryStream ms = new MemoryStream();
+            voice.SaveMessage(data.prompt, ms);
+            client.GetStream().Write(ms.GetBuffer(), 0, (int)ms.Length);
+            client.Close();
+            listener.Stop();
         }
     }
 }
