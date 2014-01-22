@@ -49,13 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MycroftSpeaker.cs" />
-    <Compile Include="MsgQuery.cs" />
     <Compile Include="MycroftVoice.cs" />
-    <Compile Include="MycroftClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="StreamServer.cs" />
     <Compile Include="TextToSpeechClient.cs" />
   </ItemGroup>
   <ItemGroup>
