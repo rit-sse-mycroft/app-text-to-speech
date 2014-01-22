@@ -32,6 +32,16 @@ namespace AppTextToSpeech
             get { return status;  }
             set { status = value; }
         }
+
+        public string InstanceId
+        {
+            get { return instanceId; }
+        }
+
+        public int Port
+        {
+            get { return port; }
+        }
       
     }
 }

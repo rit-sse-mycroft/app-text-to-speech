@@ -9,12 +9,14 @@ using System.IO;
 using System.Reflection;
 using System.Net;
 using Mycroft.App.Message;
+using System.Speech.Synthesis;
 
 namespace AppTextToSpeech
 {
     public class TextToSpeechClient : Server
     {
         private IVLCFactory factory;
+        private MycroftVoice voice;
         private Dictionary<string, MycroftSpeaker> speakers;
         private string ipAddress;
         private int port;
@@ -24,6 +26,7 @@ namespace AppTextToSpeech
         {
             factory = new TwoflowerVLCFactory();
             speakers = new Dictionary<string, MycroftSpeaker>();
+            voice = new MycroftVoice();
             WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
             using (WebResponse response = request.GetResponse())
             using (StreamReader stream = new StreamReader(response.GetResponseStream()))
@@ -70,11 +73,36 @@ namespace AppTextToSpeech
             }
         }
 
-        protected override void Response(MSG_QUERY type, dynamic message)
+        protected async override void Response(MSG_QUERY type, dynamic message)
         {
-            throw new NotImplementedException();
+            var data = message["data"];
+            MycroftSpeaker speaker = speakers[data["targetSpeaker"]];
+            if (speaker.Status != "up")
+            {
+                await SendJson("MSG_QUERY_FAIL", new { id = message["id"], message = "Target speaker is " + speaker.Status });
+            }
+            else
+            {
+                await SendJson("MSG_QUERY", new
+                {
+                    id = Guid.NewGuid(),
+                    capability = "audioOutput",
+                    instanceId = new string[] { speaker.InstanceId },
+                    data = new { ip = ipAddress, port = speaker.Port },
+                    priority = 30,
+                    action = "doStream"
+                });
+                var text = data["text"];
+                PromptBuilder prompt = new PromptBuilder(new System.Globalization.CultureInfo("en-US"));
+                foreach (var phrase in text)
+                {
+                    prompt.AppendText(phrase["phrase"]);
+                    prompt.AppendBreak(new TimeSpan(phrase["delay"] * 10000000));
+                }
+                MemoryStream ms = new MemoryStream();
+                voice.SaveMessage(prompt, ms);
+                
+            }
         }
-
-
     }
 }

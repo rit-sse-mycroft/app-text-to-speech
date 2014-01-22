@@ -22,13 +22,13 @@ namespace AppTextToSpeech
         new System.Globalization.CultureInfo("en-GB"));
     }
 
-    public void SayMessage(string message)
+    public void SayMessage(PromptBuilder message)
     {
       synth.SetOutputToDefaultAudioDevice();
       synth.Speak(message);
     }
 
-    public void SaveMessage(String message, Stream output)
+    public void SaveMessage(PromptBuilder message, Stream output)
     {
       synth.SetOutputToWaveStream(output);
       synth.Speak(message);
