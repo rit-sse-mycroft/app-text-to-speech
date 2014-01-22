@@ -84,7 +84,14 @@ namespace AppTextToSpeech
                     prompt.AppendBreak(new TimeSpan(phrase["delay"] * 10000000));
                 }
                 prompt.EndVoice();
-                prompt.AppendAudio("lutz.wav");
+                try
+                {
+                    prompt.AppendAudio("lutz.wav");
+                }
+                catch
+                {
+
+                }
                 Thread t = new Thread(Listen);
                 t.Start(new { speaker = speaker, prompt = prompt });
 
