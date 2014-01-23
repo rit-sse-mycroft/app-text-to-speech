@@ -81,7 +81,7 @@ namespace AppTextToSpeech
                 foreach (var phrase in text)
                 {
                     prompt.AppendText(phrase["phrase"]);
-                    prompt.AppendBreak(new TimeSpan(phrase["delay"] * 10000000));
+                    prompt.AppendBreak(new TimeSpan((int)(phrase["delay"] * 10000000)));
                 }
                 prompt.EndVoice();
                 try
