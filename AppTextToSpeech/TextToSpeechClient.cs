@@ -102,7 +102,7 @@ namespace AppTextToSpeech
                     instanceId = new string[] { speaker.InstanceId },
                     data = new { ip = ipAddress, port = speaker.Port },
                     priority = 30,
-                    action = "doStream"
+                    action = "stream_tts"
                 });
             }
         }
