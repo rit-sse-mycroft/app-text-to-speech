@@ -60,7 +60,7 @@ namespace Mycroft.App
             await SendManifest();
             while (true)
             {
-                dynamic obj = await ReadJson();
+                dynamic obj = ReadJson();
                 string type = obj.type;
                 dynamic message = obj.message;
 
@@ -164,7 +164,7 @@ namespace Mycroft.App
             var buf = new Char[size];
 
             //Get the message
-            await reader.ReadAsync(buf, 0, size);
+            reader.Read(buf, 0, size);
             var str = new string(buf).Trim();
             var re = new Regex(@"^([A-Z_]*)");
 
