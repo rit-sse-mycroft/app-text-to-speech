@@ -41,7 +41,7 @@ MSG_QUERY {
     "streamType" : "wav"
   },
   "priority" : 30,
-  "action" : "doStream"
+  "action" : "stream_tts"
 }
 ```
 4. The speakers connect to this application on a raw TCP connection.
