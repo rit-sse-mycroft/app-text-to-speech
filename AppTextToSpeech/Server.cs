@@ -60,7 +60,7 @@ namespace Mycroft.App
             await SendManifest();
             while (true)
             {
-                dynamic obj = ReadJson();
+                dynamic obj = await ReadJson();
                 string type = obj.type;
                 dynamic message = obj.message;
 
