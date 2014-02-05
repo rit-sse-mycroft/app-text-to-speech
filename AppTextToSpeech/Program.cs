@@ -17,7 +17,7 @@ namespace AppTextToSpeech
                 Console.WriteLine("Expected arguments in the form speechrecognizer host port");
                 return;
             }
-            var client = new TextToSpeechClient();
+            var client = new TextToSpeechClient("app.json");
             client.Connect(args[0], args[1]);
         }
     }

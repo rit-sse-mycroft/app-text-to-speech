@@ -7,21 +7,27 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Net;
-using Mycroft.App.Message;
 using System.Speech.Synthesis;
 using System.Net.Sockets;
 using System.Threading;
 
 namespace AppTextToSpeech
 {
-    public class TextToSpeechClient : Server
+    /// <summary>
+    /// The text to speech application
+    /// </summary>
+    public class TextToSpeechClient : Client
     {
         private MycroftVoice voice;
         private Dictionary<string, MycroftSpeaker> speakers;
         private string ipAddress;
         private int port;
 
-        public TextToSpeechClient() : base()
+        /// <summary>
+        /// The constructor for the TextToSpeechClient
+        /// </summary>
+        /// <param name="manifest">The path to app manifest</param>
+        public TextToSpeechClient(string manifest) : base(manifest)
         {
             speakers = new Dictionary<string, MycroftSpeaker>();
             voice = new MycroftVoice();
@@ -36,18 +42,43 @@ namespace AppTextToSpeech
             int first = ipAddress.IndexOf("Address: ") + 9;
             int last = ipAddress.LastIndexOf("</body>");
             ipAddress = ipAddress.Substring(first, last - first);
-            port = 3000;
+            port = 1500;
+            handler.On("APP_MANIFEST_OK", AppManifestOk);
+            handler.On("APP_DEPENDENCY", AppDependency);
+            handler.On("MSG_QUERY", MsgQuery);
         }
-
-        protected async override void Response(APP_MANIFEST_OK type, dynamic message)
+        /// <summary>
+        /// Makes a connection with speakers app to play audio
+        /// </summary>
+        /// <param name="data">the speaker and prompt</param>
+        protected void Listen(dynamic data)
+        {
+            var speaker = data.speaker;
+            TcpListener listener = new TcpListener(speaker.Port);
+            listener.Start();
+            TcpClient client = listener.AcceptTcpClient();
+            MemoryStream ms = new MemoryStream();
+            voice.SaveMessage(data.prompt, ms);
+            client.GetStream().Write(ms.GetBuffer(), 0, (int)ms.Length);
+            client.Close();
+            listener.Stop();
+        }
+        #region Message Handlers
+        /// <summary>
+        /// Handler for APP_MANIFEST_OK
+        /// </summary>
+        /// <param name="message">the message recieved</param>
+        protected async void AppManifestOk(dynamic message)
         {
             InstanceId = message["instanceId"];
-            Console.WriteLine("Recieved: " + type);
-            await SendData("APP_UP", "");
-            return;
+            await Up();
         }
 
-        protected override void Response(APP_DEPENDENCY type, dynamic message)
+        /// <summary>
+        /// Handler for APP_DEPENDENCY
+        /// </summary>
+        /// <param name="message">The message recieved</param>
+        protected void AppDependency(dynamic message)
         {
             var dep = message["audioOutput"];
             foreach (var kv in dep)
@@ -65,13 +96,17 @@ namespace AppTextToSpeech
             }
         }
 
-        protected async override void Response(MSG_QUERY type, dynamic message)
+        /// <summary>
+        /// Handler for MSG_QUERY
+        /// </summary>
+        /// <param name="message">The message recieved</param>
+        protected async void MsgQuery(dynamic message)
         {
             var data = message["data"];
             MycroftSpeaker speaker = speakers[data["targetSpeaker"]];
             if (speaker.Status != "up")
             {
-                await SendJson("MSG_QUERY_FAIL", new { id = message["id"], message = "Target speaker is " + speaker.Status });
+                await QueryFail(message["id"], "Target speaker is " + speaker.Status);
             }
             else
             {
@@ -95,29 +130,9 @@ namespace AppTextToSpeech
                 Thread t = new Thread(Listen);
                 t.Start(new { speaker = speaker, prompt = prompt });
 
-                SendJson("MSG_QUERY", new
-                {
-                    id = Guid.NewGuid(),
-                    capability = "audioOutput",
-                    instanceId = new string[] { speaker.InstanceId },
-                    data = new { ip = ipAddress, port = speaker.Port },
-                    priority = 30,
-                    action = "stream_tts"
-                });
+                await Query("audioOutput", "stream_tts", new { ip = ipAddress, port = speaker.Port }, new string[] { speaker.InstanceId });
             }
         }
-
-        protected void Listen(dynamic data)
-        {
-            var speaker = data.speaker;
-            TcpListener listener = new TcpListener(speaker.Port);
-            listener.Start();
-            TcpClient client = listener.AcceptTcpClient();
-            MemoryStream ms = new MemoryStream();
-            voice.SaveMessage(data.prompt, ms);
-            client.GetStream().Write(ms.GetBuffer(), 0, (int)ms.Length);
-            client.Close();
-            listener.Stop();
-        }
+        #endregion
     }
 }
