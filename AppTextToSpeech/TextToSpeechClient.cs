@@ -67,7 +67,7 @@ namespace AppTextToSpeech
         /// <summary>
         /// Handler for APP_MANIFEST_OK
         /// </summary>
-        /// <param name="message">the message recieved</param>
+        /// <param name="message">the message received</param>
         protected async void AppManifestOk(dynamic message)
         {
             InstanceId = message["instanceId"];
@@ -77,7 +77,7 @@ namespace AppTextToSpeech
         /// <summary>
         /// Handler for APP_DEPENDENCY
         /// </summary>
-        /// <param name="message">The message recieved</param>
+        /// <param name="message">The message received</param>
         protected void AppDependency(dynamic message)
         {
             var dep = message["audioOutput"];
@@ -99,7 +99,7 @@ namespace AppTextToSpeech
         /// <summary>
         /// Handler for MSG_QUERY
         /// </summary>
-        /// <param name="message">The message recieved</param>
+        /// <param name="message">The message received</param>
         protected async void MsgQuery(dynamic message)
         {
             var data = message["data"];
