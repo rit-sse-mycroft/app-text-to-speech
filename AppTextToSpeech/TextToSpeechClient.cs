@@ -55,7 +55,14 @@ namespace AppTextToSpeech
         {
             var speaker = data.speaker;
             TcpListener listener = new TcpListener(speaker.Port);
-            listener.Start();
+            try
+            {
+                listener.Start();
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                return;
+            }
             TcpClient client = listener.AcceptTcpClient();
             MemoryStream ms = new MemoryStream();
             voice.SaveMessage(data.prompt, ms);
